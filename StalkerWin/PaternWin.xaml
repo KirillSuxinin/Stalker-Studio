@@ -1,0 +1,127 @@
+﻿<Window x:Class="Stalker_Studio.StalkerWin.PaternWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Stalker_Studio.StalkerWin"
+        mc:Ignorable="d"
+        Title="Вставка" Height="442" Width="846" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow" Background="#353535" ResizeMode="NoResize" Loaded="Window_Loaded" Closing="Window_Closing">
+
+
+    <Window.Resources>
+
+
+        <Style TargetType="ListBox" x:Key="nonScrollHor">
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+        </Style>
+
+        <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+
+
+            <Setter Property="BorderBrush" Value="#464646"></Setter>
+            <Setter Property="Background" Value="#464646"/>
+            <Setter Property="Foreground" Value="white"/>
+
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+
+                        <Border x:Name="Bd" Padding="17,0,17,0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0 0 0 0" Background="{TemplateBinding Background}" SnapsToDevicePixels="True" Uid="Border_38">
+                            <ContentPresenter x:Name="ContentPresenter"  Content="{TemplateBinding Header}" ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Uid="ContentPresenter_33"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter Property="Background" TargetName="Bd" Value="#262626"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="White"/>
+
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderThickness" Value="0 0 0 0"/>
+        </Style>
+
+
+        <Style TargetType="TreeView">
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"></Setter>
+            <Setter Property="ScrollViewer.Background" Value="#262626"/>
+            <Setter Property="Background" Value="#262626"/>
+        </Style>
+
+        <Style TargetType="TreeViewItem">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#262626"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#303030"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="#303030"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+
+
+
+
+
+
+    </Window.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="71*"/>
+            <RowDefinition Height="93*"/>
+            <RowDefinition Height="126*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="219*"/>
+            <ColumnDefinition Width="245*"/>
+        </Grid.ColumnDefinitions>
+
+        <TreeView Name="treeBrowser" Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" MouseLeftButtonUp="treeBrowser_MouseLeftButtonUp">
+            <TreeView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Загруженные Xml-string" Name="mn_load_xml" Click="mn_load_xml_Click"/>
+                    <MenuItem Header="Маркированные файлы" Name="nm_markers" Click="nm_markers_Click"/>
+                    <MenuItem Header="Использовать root папку" Name="nm_rootpath" Click="nm_rootpath_Click"/>
+                    <MenuItem Header="Обновить" Name="nm_refresh" Click="nm_refresh_Click"/>
+                </ContextMenu>
+            </TreeView.ContextMenu>
+        </TreeView>
+        <ListBox Name="list_section" Grid.Column="1" HorizontalAlignment="Center" Width="422" MouseLeftButtonUp="list_section_MouseLeftButtonUp" Margin="0,22,0,75" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2">
+            <ListBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleX="0.616"/>
+                    <RotateTransform/>
+                    <TranslateTransform X="0.323"/>
+                </TransformGroup>
+            </ListBox.RenderTransform>
+        </ListBox>
+        <Image Stretch="Fill" Name="img_icon_ltx" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="1" Width="125" VerticalAlignment="Bottom" Height="66" Margin="14,0,0,1"/>
+        <ComboBox Name="combo" Grid.Column="1"  HorizontalAlignment="Right" Width="215" SelectionChanged="combo_SelectionChanged" Margin="0,73,10,28" Grid.Row="1"/>
+        <TextBox Name="txt_ret_value" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Center" Width="427" Height="66" Margin="0,10,0,0" Grid.Column="1"/>
+        <Button Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Content="Отмена" Name="btn_cancel" Click="btn_cancel_Click"/>
+        <Button Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="+" Width="20" Name="btn_add_element" Click="btn_add_element_Click"/>
+        <Button Grid.Column="1" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Установить" Name="btn_set" Click="btn_set_Click"/>
+
+    </Grid>
+</Window>

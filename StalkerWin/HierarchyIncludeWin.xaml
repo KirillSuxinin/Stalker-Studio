@@ -1,0 +1,12 @@
+﻿<Window x:Class="Stalker_Studio.StalkerWin.HierarchyIncludeWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Stalker_Studio.StalkerWin"
+        mc:Ignorable="d"
+        Title="HierarchyIncludeWin" Height="450" Width="800" WindowStartupLocation="CenterOwner">
+    <Grid Name="grid_parent" Loaded="grid_parent_Loaded" Background="#464646">
+        <StackPanel Name="mPanel" Orientation="Vertical"/>
+    </Grid>
+</Window>

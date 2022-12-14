@@ -1,0 +1,101 @@
+﻿<Window x:Class="Stalker_Studio.StalkerWin.AddIconForIconWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Stalker_Studio.StalkerWin"
+        mc:Ignorable="d"
+        Title="Добавление иконок" Height="450" Width="800" Background="#464646" WindowStartupLocation="CenterOwner">
+
+
+    <Window.Resources>
+
+
+        <Style TargetType="ListBox" x:Key="nonScrollHor">
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+        </Style>
+
+        <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+
+
+            <Setter Property="BorderBrush" Value="#464646"></Setter>
+            <Setter Property="Background" Value="#464646"/>
+            <Setter Property="Foreground" Value="white"/>
+
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+
+                        <Border x:Name="Bd" Padding="17,0,17,0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0 0 0 0" Background="{TemplateBinding Background}" SnapsToDevicePixels="True" Uid="Border_38">
+                            <ContentPresenter x:Name="ContentPresenter"  Content="{TemplateBinding Header}" ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Uid="ContentPresenter_33"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter Property="Background" TargetName="Bd" Value="#262626"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="White"/>
+
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderThickness" Value="0 0 0 0"/>
+        </Style>
+
+
+        <Style TargetType="TreeView">
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"></Setter>
+            <Setter Property="ScrollViewer.Background" Value="#262626"/>
+            <Setter Property="Background" Value="#262626"/>
+        </Style>
+
+        <Style TargetType="TreeViewItem">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#262626"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#303030"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="#303030"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+
+
+
+
+
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="391*"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Visible">
+            <Image Name="image" MouseLeftButtonDown="image_MouseLeftButtonDown" MouseLeftButtonUp="image_MouseLeftButtonUp"/>
+        </ScrollViewer>
+
+        <Button Content="Добавить .png" HorizontalAlignment="Left" Name="btn_add_icon" Click="btn_add_icon_Click"/>
+        <Button Content="Сохранить .dds" HorizontalAlignment="Right" Name="btn_save_icon" Click="btn_save_icon_Click"/>
+        
+    </Grid>
+</Window>

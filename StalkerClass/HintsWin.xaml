@@ -1,0 +1,12 @@
+﻿<Window x:Class="Stalker_Studio.StalkerClass.HintsWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Stalker_Studio.StalkerClass"
+        mc:Ignorable="d"
+        Title="HintsWin" Height="100" Width="230" Background="#FF172033" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" WindowStyle="None">
+    <Grid>
+        <ListBox Background="#FF172033" Foreground="White" Name="list_hints" MouseDoubleClick="list_hints_MouseDoubleClick" KeyUp="list_hints_KeyUp"/>
+    </Grid>
+</Window>

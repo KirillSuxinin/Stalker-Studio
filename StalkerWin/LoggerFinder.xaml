@@ -1,0 +1,13 @@
+﻿<Window x:Class="Stalker_Studio.StalkerWin.LoggerFinder"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Stalker_Studio.StalkerWin"
+        mc:Ignorable="d"
+        Title="LoggerFinder" Height="310" Width="530">
+    <Grid>
+        <TextBox Name="lab_log" HorizontalAlignment="Left" Foreground="Red" Margin="57,10,0,0" VerticalAlignment="Top" Height="165" Width="385"/>
+        <Image Name="img_anm" HorizontalAlignment="Left" VerticalAlignment="Top" Width="28" Height="26" Margin="10,10,0,0"/>
+    </Grid>
+</Window>

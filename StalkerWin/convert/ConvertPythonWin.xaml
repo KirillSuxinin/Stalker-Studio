@@ -1,0 +1,48 @@
+﻿<Window x:Class="Stalker_Studio.StalkerWin.convert.ConvertPythonWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Stalker_Studio.StalkerWin.convert"
+        mc:Ignorable="d"
+        Title="Конверт .dds | .png" Height="469" Width="772" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#FF151D2D"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="Background" Value="#FF151D2D"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style TargetType="TreeView">
+            <Setter Property="Background" Value="#FF151D2D"/>
+        </Style>
+        <Style TargetType="TreeViewItem">
+            <Setter Property="Background" Value="#FF151D2D"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Background="#FF151D2D">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="57*"/>
+            <ColumnDefinition Width="187*"/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="70" Name="btn_exit" Content="Выход" Click="btn_exit_Click" Height="20"/>
+        <Button Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="Сохранить" Width="70" Name="btn_save" Click="btn_save_Click" Height="20"/>
+
+        <Button Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="Открыть файл" Width="100" Name="btn_openFile" Click="btn_openFile_Click" />
+        <Image Grid.Column="1" Margin="50" Name="img" Stretch="Fill"/>
+        <Label Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25 0 0 0" Content="Сохранить как -" Height="26" Width="97"/>
+        <ComboBox Name="combo_mode" Grid.Column="1" HorizontalAlignment="Left" Width="80" Height="19" VerticalAlignment="Top" Margin="125 5 0 0">
+            <ComboBoxItem Content="DDS"/>
+            <ComboBoxItem Content="PNG"/>
+        </ComboBox>
+        <TreeView Name="tree_browser" SelectedItemChanged="tree_browser_SelectedItemChanged"/>
+    </Grid>
+</Window>
