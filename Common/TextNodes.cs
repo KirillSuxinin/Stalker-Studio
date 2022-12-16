@@ -132,12 +132,18 @@ namespace Stalker_Studio.Common
 				OnPropertyChanged();
 			}
 		}
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 
 	/// <summary>
 	/// Элемент, область, часть текста, описывающая объект с подчиненными элементами типа TNode
 	/// </summary>
 	public class TextObject<TNode> : TextObject
+		where TNode : IHierarchical
 	{
 		protected ObservableCollection<TNode> _nodes = new ObservableCollection<TNode>();
 
@@ -167,6 +173,13 @@ namespace Stalker_Studio.Common
 				OnPropertyChanged("Nodes");
 			}
 		}
+		public override IEnumerable<IHierarchical> Nodes
+		{
+			get
+			{
+				return _nodes as IEnumerable<IHierarchical>;
+			}
+		}
 
 		protected override void OnAddingNode(IHierarchical node)
 		{
@@ -192,7 +205,8 @@ namespace Stalker_Studio.Common
 	/// Элемент, область, часть текста, описывающая объект с подчиненными элементами типа TNode и с указанием родителя типа TParent
 	/// </summary>
 	public class TextObject<TParent, TNode> : TextObject<TNode>
-		where TParent : TextObject<TNode>
+		where TNode : IHierarchical
+		where TParent : TextObject
 	{
 		protected TParent _parent = default;
 

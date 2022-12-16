@@ -57,10 +57,17 @@ namespace Stalker_Studio.Common
         /// </summary>
         /// <param name="type">Проверяемый</param>
         bool AllowNodeType(Type type);
+        /// <summary>
+        /// Возвращает элементы в соответствии с условием predicate
+        /// Рекурсивно строит копию дерева по условию
+        /// </summary>
+        /// <param name="recursively">Выполнять рекурсивно</param>
+        /// <param name="ignoreParentPredicate">Включать родителя если подчиненный элемент подходит по условию (полный поиск по дереву)</param>
+        IEnumerable<TreeNode<IHierarchical>> FilteredNodes(Predicate<IHierarchical> predicate, bool recursively = true, bool ignoreParentPredicate = false);
     }
 
     /// <summary>
-    /// Элемента иерархии.
+    /// Элемент иерархии.
     /// Предопределяет некоторый общий функционал для удобства при наследовании
     /// </summary>
     public abstract class Hierarchical : IHierarchical
@@ -128,6 +135,60 @@ namespace Stalker_Studio.Common
             if (!AllowNodeType(node.GetType()))
                 throw new System.IO.IOException($"Значение не является { GetNodeTypes() } <{ this.GetType().FullName }>");
         }
+
+        public IEnumerable<TreeNode<IHierarchical>> FilteredNodes(Predicate<IHierarchical> predicate, bool recursively = true, bool ignoreParentPredicate = false)
+        {
+            if (Nodes == null)
+                return null;
+
+            List<TreeNode<IHierarchical>> nodes = new List<TreeNode<IHierarchical>>();
+ 
+            if (recursively && ignoreParentPredicate)
+            {
+                foreach (IHierarchical node in Nodes)
+                {
+                    if (node.IsLast)
+                    {
+                        if (predicate(node))
+                            nodes.Add(new TreeNode<IHierarchical>(node));
+                    }
+                    else
+                    {
+                        IEnumerable<TreeNode<IHierarchical>> nodeFindeds = null;
+                        nodeFindeds = node.FilteredNodes(predicate, true, true);
+
+                        if (nodeFindeds != null && nodeFindeds.Count() != 0 || predicate(node))
+                        {
+                            TreeNode<IHierarchical> newNode = new TreeNode<IHierarchical>(node);
+                            newNode.Nodes = nodeFindeds;
+                            nodes.Add(newNode);
+                        }
+                        else if (predicate(node))
+                            nodes.Add(new TreeNode<IHierarchical>(node));
+                    }
+                }
+            }
+            else
+            {
+                IEnumerable<IHierarchical> findeds = Nodes.Where(x => predicate(x));
+
+                if (findeds == null)
+                    return null;
+
+                foreach (IHierarchical node in findeds)
+                {
+                    TreeNode<IHierarchical> newNode = new TreeNode<IHierarchical>(node);
+                    if (recursively)
+                    {
+                        IEnumerable<TreeNode<IHierarchical>> nodeFindeds = node.FilteredNodes(predicate, true, false);
+                        if (nodeFindeds != null && nodeFindeds.Count() != 0)
+                            newNode.Nodes = nodeFindeds;
+                    }
+                    nodes.Add(newNode);
+                }
+            }
+            return nodes;
+        }
         /// <summary>
         /// Событие изменения свойства класса
         /// </summary>
@@ -144,7 +205,7 @@ namespace Stalker_Studio.Common
         /// <summary>
         /// Подчиненные элементы
         /// </summary>
-        ObservableCollection<ITreeNode> Nodes { get; set; }
+       IEnumerable<ITreeNode> Nodes { get; set; }
         /// <summary>
         /// Подчиненные элементов нет
         /// </summary>
@@ -153,6 +214,11 @@ namespace Stalker_Studio.Common
         /// Хранимое значение
         /// </summary>
         object Value { get; set; }
+        /// <summary>
+        /// Возвращает элементы в соответствии с условием predicate и рекурсивно 
+        /// </summary>
+        /// <param name="recursively">Выполнять рекурсивно</param>
+        IEnumerable<ITreeNode> FilteredNodes(Predicate<object> predicate, bool recursively = true);
     }
 
     /// <summary>
@@ -182,11 +248,13 @@ namespace Stalker_Studio.Common
         /// Событие изменения свойства класса
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        public virtual ObservableCollection<ITreeNode> Nodes { 
-            get { return _nodes as ObservableCollection<ITreeNode>; }
+        public virtual IEnumerable<ITreeNode> Nodes { 
+            get { return _nodes; }
             set { 
-                _nodes = value as ObservableCollection<TreeNode<TType>>;
+                _nodes = new ObservableCollection<TreeNode<TType>>(value as IEnumerable<TreeNode<TType>>);
                 OnPropertyChanged();
             }
         }
@@ -216,10 +284,55 @@ namespace Stalker_Studio.Common
         {
             return _value;
         }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        /// <summary>
+        /// Возвращает элементы в соответствии с условием predicate
+        /// Рекурсивно строит копию дерева по условию
+        /// </summary>
+        /// <param name="recursively">Выполнять рекурсивно</param>
+        public IEnumerable<ITreeNode> FilteredNodes(Predicate<object> predicate, bool recursively = true) 
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            IEnumerable<TreeNode<TType>> findeds = _nodes.Where(x => predicate(x.Value));
+
+            if (!recursively) 
+                return findeds;
+
+            List<ITreeNode> nodes = new List<ITreeNode>();
+
+            foreach (TreeNode<TType> node in findeds)
+            {
+                TreeNode<TType> newNode = new TreeNode<TType>(node.GetValue());
+                newNode.Nodes = node.FilteredNodes(predicate, true);
+                nodes.Add(newNode);
+            }
+
+            return nodes;
+        }
+        /// <summary>
+        /// Возвращает элементы в соответствии с условием predicate
+        /// Рекурсивно строит копию дерева по условию
+        /// </summary>
+        /// <param name="recursively">Выполнять рекурсивно</param>
+        public IEnumerable<TreeNode<TType>> FilteredNodes(Predicate<TType> predicate, bool recursively = true)
+        {
+            IEnumerable<TreeNode<TType>> findeds = _nodes.Where(x => predicate(x.GetValue()));
+
+            if (!recursively)
+                return findeds;
+
+            List<TreeNode<TType>> nodes = new List<TreeNode<TType>>();
+
+            foreach (TreeNode<TType> node in findeds)
+            {
+                TreeNode<TType> newNode = new TreeNode<TType>(node.GetValue());
+                newNode.Nodes = node.FilteredNodes(predicate, true);
+                nodes.Add(newNode);
+            }
+
+            return nodes;
+        }
+        public override string ToString()
+        {
+            return _value.ToString();
         }
     }
 

@@ -46,8 +46,12 @@
     </Style>
 
     <Style TargetType="Menu" BasedOn="{StaticResource style_Common}"/>
-
-    <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource style_Common}">
+    
+    <Style x:Key="style_MenuExtendedCommands"  TargetType="Menu" BasedOn="{StaticResource style_Common}">
+        <Setter Property="ItemContainerStyle" Value="{StaticResource style_MenuItemExtendedCommand}"/>
+    </Style>
+    
+    <Style x:Key="style_MenuItem"  TargetType="{x:Type MenuItem}" BasedOn="{StaticResource style_Common}">
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="Margin" Value="0"/>
@@ -111,6 +115,14 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <Style x:Key="style_MenuItemExtendedCommand" TargetType="MenuItem" BasedOn="{StaticResource style_MenuItem}">
+        <Setter Property="Header" Value="{Binding RelativeSource={RelativeSource Self}, Path=Command.Name}"/>
+        <Setter Property="Icon" Value="{Binding RelativeSource={RelativeSource Self}, Path=Command.Icon}"/>
+        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Command.ToolTip}"/>
+    </Style>
+    
+    <Style TargetType="MenuItem" BasedOn="{StaticResource style_MenuItem}"/>
 
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
         <Setter Property="Height" Value="1" />
@@ -127,8 +139,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-    <!-- TopLevelHeader -->
-    
 
 </ResourceDictionary>

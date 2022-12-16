@@ -13,7 +13,7 @@
     <Color x:Key="color_Selection">#c17a40</Color>
     <Color x:Key="color_Focused">#ea971a</Color>
     <Color x:Key="color_Spot">#373635</Color>
-
+    
 
     <SolidColorBrush x:Key="brush_Background" Color="{DynamicResource color_Background}"/>
     <SolidColorBrush x:Key="brush_Glyph" Color="{DynamicResource color_Glyph}"/>
@@ -83,7 +83,10 @@
                             <!-- Title bar -->
                             <Grid VerticalAlignment="Top">
                                 <!-- Window title -->
-                                <TextBlock Margin="10,0" FontWeight="Bold" Text="{TemplateBinding Title}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <TextBlock Margin="10,0" FontWeight="Bold" Text="{TemplateBinding Title}"/>
+                                    <TextBlock Margin="10,0" Text="{TemplateBinding ToolTip}"/>
+                                </StackPanel>
 
                                 <!-- Window control buttons stack -->
                                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
@@ -132,14 +135,6 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
-    <Style TargetType="TreeView" BasedOn="{StaticResource style_Common}">
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"></Setter>
-        <Setter Property="ScrollViewer.Background" Value="#262626"/>
-        <Setter Property="Background" Value="{DynamicResource brush_BackgroundContent}"/>
-    </Style>
-
-    <Style TargetType="TreeViewItem" BasedOn="{StaticResource style_Common}"/>
 
     <Style TargetType="Label" BasedOn="{StaticResource style_Common}">
         <Setter Property="VerticalContentAlignment" Value="Center"/>

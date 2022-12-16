@@ -11,6 +11,7 @@ namespace Stalker_Studio.ViewModel
 	{
 
 		#region fields
+		private FileModel file = null;
 		private static ImageSourceConverter ISC = new ImageSourceConverter();
 		private bool _isModified = false;
 		private ExtendedRelayCommand _saveCommand = null;
@@ -18,15 +19,11 @@ namespace Stalker_Studio.ViewModel
 		private ExtendedRelayCommand _closeCommand = null;
 		#endregion fields
 
-		#region constructors
-		/// <summary>
-		/// Class constructor from file path.
-		/// </summary>
-		/// <param name="filePath"></param>
 		public FileViewModel(FileModel file)
 		{
+			
 			//Set the icon only for open documents (just a test)
-			IconSource = ISC.ConvertFromInvariantString(@"pack://application:,,/Images/document.png") as ImageSource;
+			//IconSource = ISC.ConvertFromInvariantString(@"pack://application:,,/Images/document.png") as ImageSource;
 		}
 
 		/// <summary>
@@ -37,7 +34,6 @@ namespace Stalker_Studio.ViewModel
 			IsModified = true;
 			//Title = FileName;
 		}
-		#endregion constructors
 
 		#region Properties
 

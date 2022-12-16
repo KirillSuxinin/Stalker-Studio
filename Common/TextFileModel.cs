@@ -71,11 +71,13 @@ namespace Stalker_Studio.Common
         {
             StreamReader streamReader = new StreamReader(_fullName, _encoding);
             _text = streamReader.ReadToEnd();
+            streamReader.Close();
         }
         public override void Save()
         {
             StreamWriter streamWriter = new StreamWriter(_fullName, false, _encoding);
             streamWriter.Write(_text);
+            streamWriter.Close();
         }
 
 

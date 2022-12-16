@@ -179,7 +179,7 @@ namespace Stalker_Studio.Common
         }
         public override bool IsLast
         {
-            get { return true; }
+            get { return _nodes == null || _nodes.Count == 0; }
         }
         public override FileSystemInfo Info
         {
@@ -206,13 +206,14 @@ namespace Stalker_Studio.Common
                     _nodes.Add(new DirectoryModel(file.FullName));
                 else if(file.Extension.ToLower() == ".ltx")
                 {
-                    StalkerClass.LtxModel ltx = new StalkerClass.LtxModel();
-                    ltx.FullName = file.FullName;
+                    StalkerClass.LtxModel ltx = new StalkerClass.LtxModel(file.FullName);
+                    ltx.Load();
                     _nodes.Add(ltx);
                 }
                 else
                     _nodes.Add(new FileModel(file.FullName));
             }
+            OnPropertyChanged("Nodes");
         }
 
         public override void Save() 
