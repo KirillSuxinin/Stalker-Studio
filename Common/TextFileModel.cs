@@ -18,7 +18,12 @@ namespace Stalker_Studio.Common
         protected string _text = "";
         protected Encoding _encoding = Encoding.Unicode;
 
-        public TextFileModel() : base() { }
+        public TextFileModel(Encoding encoding = null, string text = "") : base() 
+        {
+            _text = text;
+            if (encoding != null)
+                _encoding = encoding;
+        }
         public TextFileModel(FileInfo file, Encoding encoding = null) : base(file)
         {
             // автосериализация не нужна, так как сериализовать нечего
@@ -27,12 +32,11 @@ namespace Stalker_Studio.Common
             if(encoding != null)
                 _encoding = encoding;
         }
-        public TextFileModel(string text, Encoding encoding = null) : base()
+        public TextFileModel(string fullName, Encoding encoding = null) : base(fullName)
         {
             // автосериализация не нужна, так как сериализовать нечего
             // но поддержку автосериализации реализовывать обязательно
 
-            _text = text;
             if (encoding != null)
                 _encoding = encoding;
         }
@@ -40,8 +44,11 @@ namespace Stalker_Studio.Common
         /// <summary>
         /// Текст
         /// </summary>
+        [System.ComponentModel.Browsable(false)]
         public string Text { 
             get {
+                if (!_isLoaded)
+                    Load();
                 UpdateSerialization();// обязательно для поддержки автосериализации
                 return _text; 
             } 
@@ -67,13 +74,13 @@ namespace Stalker_Studio.Common
             }
         }
 
-        public override void Load()
+        protected override void OnLoad()
         {
             StreamReader streamReader = new StreamReader(_fullName, _encoding);
             _text = streamReader.ReadToEnd();
             streamReader.Close();
         }
-        public override void Save()
+        protected override void OnSave()
         {
             StreamWriter streamWriter = new StreamWriter(_fullName, false, _encoding);
             streamWriter.Write(_text);

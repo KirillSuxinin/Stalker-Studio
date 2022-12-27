@@ -16,8 +16,8 @@ namespace Stalker_Studio.Common
 	{
 		protected int _startLineIndex = -1;
 		protected int _endLineIndex = -1;
-		protected int _startIndex = -1;
-		protected int _endIndex = -1;
+        protected int _startIndex = -1;
+        protected int _endIndex = -1;
 
 		public TextNode() { }
 
@@ -29,11 +29,31 @@ namespace Stalker_Studio.Common
             _endIndex = endIndex;
         }
 		/// <summary>
+		/// Индекс символа c которого начинается элемент в начальной строке в тексте
+		/// </summary>
+		[
+			System.ComponentModel.DisplayName("Начальная позиция"),
+			System.ComponentModel.Description("Индекс символа c которого начинается элемент в начальной строке в тексте")
+		]
+		public int StartIndex 
+		{ 
+			get => _startIndex;
+			set
+			{
+				_startIndex = value;
+				OnPropertyChanged();
+			}
+		}
+		/// <summary>
 		/// Индекс символа на котором заканичавется элемент в конечной строке в тексте
 		/// </summary>
+		[
+			System.ComponentModel.DisplayName("Конечная позиция"), 
+			System.ComponentModel.Description("Индекс символа на котором заканичавется элемент в конечной строке в тексте")
+		]
 		public int EndIndex
 		{
-			get { return _endIndex; }
+			get => _endIndex;
 			set
 			{
 				_endIndex = value;
@@ -41,8 +61,12 @@ namespace Stalker_Studio.Common
 			}
 		}
 		/// <summary>
-		/// Индекс строки в которой начинается элемент в тексте
+		/// Индекс строки c которой начинается элемент в тексте
 		/// </summary>
+		[
+			System.ComponentModel.DisplayName("Начальная строка"),
+			System.ComponentModel.Description("Индекс строки c которой начинается элемент в тексте")
+		]
 		public int StartLineIndex
 		{
 			get { return _startLineIndex; }
@@ -55,6 +79,10 @@ namespace Stalker_Studio.Common
 		/// <summary>
 		/// Индекс строки в которой заканчивается элемент в тексте
 		/// </summary>
+		[
+			System.ComponentModel.DisplayName("Конечная строка"),
+			System.ComponentModel.Description("Индекс строки в которой заканчивается элемент в тексте")
+		]
 		public int EndLineIndex
 		{
 			get { return _endLineIndex; }
@@ -82,7 +110,7 @@ namespace Stalker_Studio.Common
 			set { }
 		}
 
-		protected override void OnAddingNode(IHierarchical node) { }
+        protected override void OnAddingNode(IHierarchical node) { }
 		protected override void OnAddingNodeAt(IHierarchical node, int index) { }
 		protected override void OnRemoveNode(IHierarchical node, bool recursively) { }
 		protected override void OnRemoveNodeAt(int index) { }
@@ -106,13 +134,19 @@ namespace Stalker_Studio.Common
 		{
 			_startLineIndex = startLineIndex;
 			_endLineIndex = endLineIndex;
-			_startIndex = startIndex;
+			StartIndex = startIndex;
 			_endIndex = endIndex;
 			_name = name;
 		}
 		/// <summary>
 		/// Имя объекта
 		/// </summary>
+		[
+			System.ComponentModel.Category("Основные"),
+			System.ComponentModel.DisplayName("Имя"),
+			System.ComponentModel.Description("Имя или ключ объекта"),
+			PropertyTools.DataAnnotations.SortIndex(-1)
+		]
 		public string Name {
 			get { return _name; }
 			set {
@@ -123,6 +157,11 @@ namespace Stalker_Studio.Common
 		/// <summary>
 		/// Комментарий, связанный с объектом
 		/// </summary>
+		[
+			System.ComponentModel.Category("Основные"),
+			System.ComponentModel.DisplayName("Комментарий"),
+			System.ComponentModel.Description("Комментарий, связанный с объектом в тексте")
+		]
 		public string Comment
 		{
 			get { return _comment; }
@@ -223,6 +262,11 @@ namespace Stalker_Studio.Common
 		/// <summary>
 		/// Родитель 
 		/// </summary>
+		[
+			System.ComponentModel.Category("Основные"),
+			System.ComponentModel.DisplayName("Владелец"),
+			System.ComponentModel.Description("Владелец элемента")
+		]
 		public TParent Parent
 		{
 			get { return _parent; }

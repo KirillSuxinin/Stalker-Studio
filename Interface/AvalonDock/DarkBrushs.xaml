@@ -9,12 +9,12 @@
     </ResourceDictionary.MergedDictionaries>
 
     <!--  Accent Keys  -->
-    <Color x:Key="{x:Static reskeys:ResourceKeys.ControlAccentColorKey}">#FF007ACC</Color>
+    <!--<Color x:Key="brush_Blue">#FF007ACC</Color>-->
 
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.ControlAccentBrushKey}"
 		options:Freeze="true"
-		Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" />
+		Color="{DynamicResource color_Blue}" />
 
     <!--  General  -->
     <SolidColorBrush
@@ -50,19 +50,19 @@
 		options:Freeze="true"
 		Color="{DynamicResource color_Background}" />
     <!--  AccentColor  -->
-    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.AutoHideTabHoveredBorder}" Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" />
+    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.AutoHideTabHoveredBorder}" Color="{DynamicResource color_Selection}" />
 
     <!--  AccentColor  -->
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.AutoHideTabHoveredText}"
 		options:Freeze="true"
-		Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" />
+		Color="{DynamicResource color_Blue}" />
 
     <!--  Document Well : Overflow Button  -->
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.DocumentWellOverflowButtonDefaultGlyph}"
 		options:Freeze="true"
-		Color="#F1F1F1" />
+		Color="{DynamicResource color_Glyph}" />
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.DocumentWellOverflowButtonHoveredBackground}"
 		options:Freeze="true"
@@ -95,7 +95,7 @@
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabSelectedActiveBackground}"
 		options:Freeze="true"
-		Color="{DynamicResource color_Selection}" />
+		Color="{DynamicResource color_Selection}"/>
 
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabSelectedActiveText}"
@@ -121,7 +121,7 @@
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabUnselectedHoveredBackground}"
 		options:Freeze="true"
-		Color="{DynamicResource color_Selection}" />
+		Color="{DynamicResource color_Border}" />
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabUnselectedHoveredText}"
 		options:Freeze="true"
@@ -131,7 +131,7 @@
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabButtonSelectedActiveGlyph}"
 		options:Freeze="true"
-		Color="#FFFFFF" />
+		Color="{DynamicResource color_Glyph}" />
 
     <!--  AccentColor  -->
     <SolidColorBrush
@@ -400,7 +400,7 @@
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.DockingButtonForegroundBrushKey}"
 		options:Freeze="true"
-		Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" />
+		Color="{DynamicResource color_Red}" />
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.DockingButtonForegroundArrowBrushKey}"
 		options:Freeze="true"
@@ -420,11 +420,11 @@
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.PreviewBoxBorderBrushKey}"
 		options:Freeze="true"
-		Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" />
+		Color="{DynamicResource color_Red}" />
     <SolidColorBrush
 		x:Key="{x:Static reskeys:ResourceKeys.PreviewBoxBackgroundBrushKey}"
 		options:Freeze="true"
 		Opacity="0.5"
-		Color="{DynamicResource {x:Static reskeys:ResourceKeys.ControlAccentColorKey}}" />
+		Color="{DynamicResource color_Red}" />
 
 </ResourceDictionary>

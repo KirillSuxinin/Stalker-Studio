@@ -13,22 +13,25 @@ namespace Stalker_Studio.ViewModel
 {
 	internal partial class Workspace : ViewModelBase
 	{
-        private ToolViewModel[] _tools = null;
+        private ObservableCollection<ToolViewModel> _tools = null;
 		private ObservableCollection<string> _lastFiles = new ObservableCollection<string>();
 		private ObservableCollection<FileViewModel> _files = new ObservableCollection<FileViewModel>();
+		private ObservableCollection<FileModel> _fixedFiles = new ObservableCollection<FileModel>();
 
+		private object _activeContent = null;
 		private FileViewModel _activeDocument = null;
-		private HierarchicalViewModel _browser = null;
+		private BrowserViewModel _browser = null;
+		private PropertiesViewModel _propertiesTool = null;
 		//private FileStatsViewModel _fileStats = null;
-		private Tuple<string, Theme> selectedTheme;
+		private Tuple<string, Theme> _selectedTheme;
 
 		protected Workspace()
 		{
-			this.Themes = new List<Tuple<string, Theme>>
+			Themes = new List<Tuple<string, Theme>>
 			{
 				new Tuple<string, Theme>(nameof(AvalonDockDarkTheme), new AvalonDockDarkTheme()),
 			};
-			this.SelectedTheme = Themes.First();
+			_selectedTheme = Themes.First();
 
 			string[] elements = Properties.Settings.Default.LastOpenIndex.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (string vEl in elements)
@@ -40,18 +43,7 @@ namespace Stalker_Studio.ViewModel
         #region properties
 
         public static Workspace This { get; } = new Workspace();
-		/// <summary>
-		/// Заголовок рабочего пространства (главной формы)
-		/// </summary>
-		public string Title
-		{
-			get {
-				string title = "Stalker studio";
-				if (Gamedata.Root != null)
-					title += "  -  " + Gamedata.Root.FullName;
-				return title;
-			}
-		}
+
 		/// <summary>
 		/// Текущие открытые файлы
 		/// </summary>
@@ -60,15 +52,22 @@ namespace Stalker_Studio.ViewModel
 			get => new ReadOnlyObservableCollection<FileViewModel>(_files);
 		}
 		/// <summary>
+		/// Текущие закрепленные файлы
+		/// </summary>
+		public ObservableCollection<FileModel> FixedFiles
+		{
+			get => _fixedFiles;
+		}
+		/// <summary>
 		/// Инструменты
 		/// </summary>
 		public IEnumerable<ToolViewModel> Tools
 		{
 			get
 			{
-				//if (_tools == null)
-				//	_tools = new ToolViewModel[] { FileStats };
-				return _tools;
+                if (_tools == null)
+                    _tools = new ObservableCollection<ToolViewModel> { Browser, PropertiesTool };
+                return _tools;
 			}
 		}
 		/// <summary>
@@ -107,36 +106,75 @@ namespace Stalker_Studio.ViewModel
 		/// </summary>
 		public List<Tuple<string, Theme>> Themes { get; set; }
 		/// <summary>
-		/// Текущя тема
+		/// Текущая тема
 		/// </summary>
 		public Tuple<string, Theme> SelectedTheme
 		{
-			get => selectedTheme;
+			get => _selectedTheme;
 			set
 			{
-				selectedTheme = value;
+				_selectedTheme = value;
 				OnPropertyChanged();
 			}
 		}
 		/// <summary>
-		/// Инструменты
+		/// Обозреватель
 		/// </summary>
-		public HierarchicalViewModel Browser
+		public BrowserViewModel Browser
 		{
 			get
 			{
 				if (_browser == null)
-					_browser = new HierarchicalViewModel(StalkerClass.GamedataManager.This.Root);
+				{
+					_browser = new BrowserViewModel("Обозреватель", StalkerClass.GamedataManager.This.Root);
+					_browser.FixedNodes = _fixedFiles;
+					_browser.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
+					{
+						if (e.PropertyName == nameof(HierarchicalViewModel.SelectedItem))
+							PropertiesTool.Source = (sender as HierarchicalViewModel).SelectedItem;
+					};
+				}
 				return _browser;
 			}
 		}
-		#endregion properties
-
-		#region methods
 		/// <summary>
-		/// Закрывает файл
+		/// Обозреватель свойств
 		/// </summary>
-		internal void Close(FileViewModel fileToClose)
+		public PropertiesViewModel PropertiesTool
+		{
+			get
+			{
+				if (_propertiesTool == null)
+				{
+					_propertiesTool = new PropertiesViewModel("Свойства");
+				}
+				return _propertiesTool;
+			}
+		}
+
+        public object ActiveContent 
+		{ 
+			get => _activeContent;
+			set
+			{
+				if (_activeContent is PaneViewModel)
+					(_activeContent as PaneViewModel).IsSelected = false;
+
+				_activeContent = value;
+
+				if (_activeContent is PaneViewModel)
+					(_activeContent as PaneViewModel).IsSelected = true;
+
+				OnPropertyChanged();
+			}
+		}
+        #endregion properties
+
+        #region methods
+        /// <summary>
+        /// Закрывает файл
+        /// </summary>
+        internal void Close(FileViewModel fileToClose)
 		{
 			if (fileToClose.IsModified)
 			{
@@ -170,41 +208,55 @@ namespace Stalker_Studio.ViewModel
 			ActiveDocument.IsModified = false;
 		}
 		/// <summary>
-		/// Отркывает файл по пути
+		/// Отркывает файл
 		/// </summary>
 		internal FileViewModel Open(string filepath)
 		{
-			//var fileViewModel = _files.FirstOrDefault(fm => fm.FilePath == filepath);
-			//if (fileViewModel != null)
-			//	return fileViewModel;
+			FileViewModel fileViewModel = _files.SingleOrDefault(x => x.File.FullName == filepath);
+			if (fileViewModel == default)
+			{
+				FileModel file = StalkerClass.GamedataManager.This.GetFileAtPath(filepath);
+				if (file == default)
+					file = StalkerClass.GamedataManager.CreateFileSystemNodeFromExtension(filepath);
+				fileViewModel = Open(file);
+			}
+			ActiveDocument = fileViewModel;
+			return fileViewModel;
+		}
+		/// <summary>
+		/// Отркывает файл
+		/// </summary>
+		internal FileViewModel Open(FileModel file)
+		{
+			FileViewModel fileViewModel = _files.SingleOrDefault(x => x.File == file);
+			if (fileViewModel == default)
+			{
+				if (file is TextFileModel)
+					fileViewModel = new TextFileViewModel(file as TextFileModel);
+				else
+					fileViewModel = new FileViewModel(file);
 
-			//fileViewModel = new FileViewModel(filepath);
-			//_files.Add(fileViewModel);
-			//return fileViewModel;
+				_files.Add(fileViewModel);
+			}
 
-			AddLastFile(filepath);
-
-			return null;
+			ActiveDocument = fileViewModel;
+			AddLastFile(file.FullName);
+			return fileViewModel;
 		}
 		/// <summary>
 		/// Добавляет путь в последние открытые файлы и сохраняет это в настройках
 		/// </summary>
 		internal void AddLastFile(string filepath)
 		{
-			if (_lastFiles.Contains(filepath))
-				_lastFiles.Remove(filepath);
+			_lastFiles.Remove(filepath);
 			_lastFiles.Insert(0, filepath);
+			
+			string lastOpenFiles = "";
+			foreach (string file in _lastFiles)
+				lastOpenFiles += file + ';';
+			Properties.Settings.Default.LastOpenIndex = lastOpenFiles;
 
-			if (_lastFiles.Contains(filepath))
-			{
-				string lastOpenfiles = "";
-				foreach (string file in _lastFiles)
-					lastOpenfiles += file + ';';
-				Properties.Settings.Default.LastOpenIndex = lastOpenfiles;
-			}
-			else
-				Properties.Settings.Default.LastOpenIndex = filepath + ';' + Properties.Settings.Default.LastOpenIndex;
-			OnPropertyChanged("LastFiles");
+			OnPropertyChanged(nameof(LastFiles));
 		}
 
 		#endregion methods

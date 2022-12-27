@@ -3,26 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Stalker_Studio.ViewModel
 {
-	internal class ToolViewModel : PaneViewModel
+	class ToolViewModel : PaneViewModel
 	{
-		#region fields
 		private bool _isVisible = true;
-		#endregion fields
+		private string _initLocationName = null;
+		protected FrameworkElement _mainControl = null;
 
-		#region constructor
-		/// <summary>
-		/// Class constructor
-		/// </summary>
-		/// <param name="name"></param>
 		public ToolViewModel(string name)
 		{
 			Name = name;
 			Title = name;
 		}
-		#endregion constructor
 
 		#region Properties
 		public string Name { get; private set; }
@@ -39,6 +35,16 @@ namespace Stalker_Studio.ViewModel
 				}
 			}
 		}
-		#endregion Properties
-	}
+		public FrameworkElement MainControl
+		{
+			get => _mainControl;
+			set
+			{
+				_mainControl = value;
+			}
+		}
+
+		public string InitLocationName { get => _initLocationName; set => _initLocationName = value; }
+        #endregion Properties
+    }
 }

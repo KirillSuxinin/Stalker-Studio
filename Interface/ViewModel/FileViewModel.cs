@@ -9,45 +9,53 @@ namespace Stalker_Studio.ViewModel
 {
 	class FileViewModel : PaneViewModel
 	{
-
-		#region fields
-		private FileModel file = null;
-		private static ImageSourceConverter ISC = new ImageSourceConverter();
+		private FileModel _file = null;
 		private bool _isModified = false;
 		private ExtendedRelayCommand _saveCommand = null;
 		private ExtendedRelayCommand _saveAsCommand = null;
 		private ExtendedRelayCommand _closeCommand = null;
-		#endregion fields
 
 		public FileViewModel(FileModel file)
 		{
-			
-			//Set the icon only for open documents (just a test)
-			//IconSource = ISC.ConvertFromInvariantString(@"pack://application:,,/Images/document.png") as ImageSource;
-		}
+			_file = file;
+            _file.PropertyChanged += File_PropertyChanged;
 
-		/// <summary>
-		/// Default class constructor
-		/// </summary>
+			Initialize();
+		}
+		public FileViewModel(string fullName)
+		{
+			_file = new FileModel(fullName);
+			_file.PropertyChanged += File_PropertyChanged;
+			IsModified = true;
+
+			Initialize();
+		}
 		public FileViewModel()
 		{
+			_file = new FileModel();
+			_file.PropertyChanged += File_PropertyChanged;
 			IsModified = true;
-			//Title = FileName;
+
+			Initialize();
 		}
 
 		#region Properties
+		/// <summary>
+		/// Заголовок
+		/// </summary>
+		public override string Title
+        {
+            get
+            {
+                if (_file.Name == null)
+                    return "Noname" + (IsModified ? "*" : "");
 
-		//public string Title
-		//{
-		//	get
-		//	{
-		//		if (file.FullName == null)
-		//			return "Noname" + (IsModified ? "*" : "");
-
-		//		return file.Name + (IsModified ? "*" : "");
-		//	}
-		//}
-
+                return _file.Name + _file.Extension + (IsModified ? "*" : "");
+            }
+        }
+		/// <summary>
+		/// True если файл был изменен
+		/// </summary>
 		public bool IsModified
 		{
 			get => _isModified;
@@ -56,13 +64,24 @@ namespace Stalker_Studio.ViewModel
 				if (_isModified != value)
 				{
 					_isModified = value;
-					OnPropertyChanged(nameof(IsModified));
-					//OnPropertyChanged(nameof(Title));
+					OnPropertyChanged();
+					OnPropertyChanged(nameof(Title));
 				}
 			}
 		}
-
-		public ICommand SaveCommand
+		/// <summary>
+		/// Файл
+		/// </summary>
+		public FileModel File
+		{
+			get => _file;
+			set
+			{
+				_file = value;
+				OnPropertyChanged();
+			}
+		}
+		public ExtendedRelayCommand SaveCommand
 		{
 			get
 			{
@@ -72,8 +91,7 @@ namespace Stalker_Studio.ViewModel
 				return _saveCommand;
 			}
 		}
-
-		public ICommand SaveAsCommand
+		public ExtendedRelayCommand SaveAsCommand
 		{
 			get
 			{
@@ -83,8 +101,7 @@ namespace Stalker_Studio.ViewModel
 				return _saveAsCommand;
 			}
 		}
-
-		public ICommand CloseCommand
+		public ExtendedRelayCommand CloseCommand
 		{
 			get
 			{
@@ -95,50 +112,50 @@ namespace Stalker_Studio.ViewModel
 			}
 		}
 
-		public override ObservableCollection<ICommand> Commands { 
-			get {
-				if (_commands.Count == 0)
-				{
-					_commands.Add(SaveCommand);
-					_commands.Add(SaveAsCommand);
-					_commands.Add(CloseCommand);
-				}
-				return _commands;
-			} 
-		}
-
 		#endregion  Properties
 
-		#region methods
-		private bool CanClose()
+		private void Initialize() 
+		{
+			_commands.Add(SaveCommand);
+			_commands.Add(SaveAsCommand);
+			_commands.Add(CloseCommand);
+		}
+
+		private void File_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			IsModified = true;
+			OnPropertyChanged(nameof(File));
+			OnPropertyChanged(nameof(Title));
+		}
+
+		protected virtual bool CanClose()
 		{
 			return true;
 		}
 
-		private void OnClose()
+		protected virtual void OnClose()
 		{
 			Workspace.This.Close(this);
 		}
 
-		private bool CanSave(object parameter)
+		protected virtual bool CanSave(object parameter)
 		{
 			return IsModified;
 		}
 
-		private void OnSave(object parameter)
+		protected virtual void OnSave(object parameter)
 		{
 			Workspace.This.Save(this, false);
 		}
 
-		private bool CanSaveAs(object parameter)
+		protected virtual bool CanSaveAs(object parameter)
 		{
 			return IsModified;
 		}
 
-		private void OnSaveAs(object parameter)
+		protected virtual void OnSaveAs(object parameter)
 		{
 			Workspace.This.Save(this, true);
 		}
-		#endregion methods
 	}
 }

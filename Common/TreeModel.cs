@@ -19,10 +19,12 @@ namespace Stalker_Studio.Common
         /// <summary>
         /// Подчиненные элементы
         /// </summary>
+        [System.ComponentModel.Browsable(false)]
         IEnumerable<IHierarchical> Nodes { get; }
         /// <summary>
         /// Подчиненных элементов нет
         /// </summary>
+        [System.ComponentModel.Browsable(false)]
         bool IsLast { get; }
 
         /// <summary>
@@ -51,6 +53,7 @@ namespace Stalker_Studio.Common
         /// <summary>
         /// Возвращает возможные типы подчиненных элементов
         /// </summary>
+        [System.ComponentModel.ReadOnly(true)]
         IEnumerable<Type> GetNodeTypes();
         /// <summary>
         /// Проверяет соответствие типов подчиненных элементов типу type
@@ -64,6 +67,12 @@ namespace Stalker_Studio.Common
         /// <param name="recursively">Выполнять рекурсивно</param>
         /// <param name="ignoreParentPredicate">Включать родителя если подчиненный элемент подходит по условию (полный поиск по дереву)</param>
         IEnumerable<TreeNode<IHierarchical>> FilteredNodes(Predicate<IHierarchical> predicate, bool recursively = true, bool ignoreParentPredicate = false);
+        /// <summary>
+        /// Возвращает элементы в соответствии с условием predicate
+        /// </summary>
+        /// <param name="recursively">Выполнять рекурсивно</param>
+        IEnumerable<IHierarchical> FindNodes(Predicate<IHierarchical> predicate, bool recursively = true);
+
     }
 
     /// <summary>
@@ -74,7 +83,9 @@ namespace Stalker_Studio.Common
     {
         public abstract IHierarchical this[int index] { get; set; }
 
+        [System.ComponentModel.Browsable(false)]
         public abstract IEnumerable<IHierarchical> Nodes { get; set; }
+        [System.ComponentModel.Browsable(false)]
         public virtual bool IsLast { 
             get {
                 IEnumerable<IHierarchical> nodes = Nodes;
@@ -189,6 +200,28 @@ namespace Stalker_Studio.Common
             }
             return nodes;
         }
+
+        public IEnumerable<IHierarchical> FindNodes(Predicate<IHierarchical> predicate, bool recursively = true) 
+        {
+            List<IHierarchical> finded = new List<IHierarchical>();
+            IEnumerable<IHierarchical> nodes = Nodes;
+
+            if (nodes == null)
+                return finded;
+
+            if (recursively)
+                foreach (IHierarchical node in nodes)
+                {
+                    if (predicate(node))
+                        finded.Add(node);
+                    finded.AddRange(node.FindNodes(predicate, true));
+                }
+            else
+                foreach (IHierarchical node in nodes)
+                    if (predicate(node))
+                        finded.Add(node);
+            return finded;
+        }
         /// <summary>
         /// Событие изменения свойства класса
         /// </summary>
@@ -205,10 +238,12 @@ namespace Stalker_Studio.Common
         /// <summary>
         /// Подчиненные элементы
         /// </summary>
-       IEnumerable<ITreeNode> Nodes { get; set; }
+        [System.ComponentModel.Browsable(false)]
+        IEnumerable<ITreeNode> Nodes { get; set; }
         /// <summary>
         /// Подчиненные элементов нет
         /// </summary>
+        [System.ComponentModel.Browsable(false)]
         bool IsLast { get; }
         /// <summary>
         /// Хранимое значение
@@ -223,6 +258,7 @@ namespace Stalker_Studio.Common
 
     /// <summary>
     /// Элемента дерева с отдельно хранимым значением
+    /// Подписывается на события изменения Value если его тип реализует интерфейс INotifyPropertyChanged, для выдачи OnPropertyChanged(null)
     /// </summary>
     public class TreeNode<TType> : ITreeNode
     {
@@ -241,6 +277,8 @@ namespace Stalker_Studio.Common
         }
         public TreeNode(TType value)
         {
+            if (value is INotifyPropertyChanged)
+                (value as INotifyPropertyChanged).PropertyChanged += ValuePropertyChanged;
             _value = value;
         }
 
@@ -251,6 +289,7 @@ namespace Stalker_Studio.Common
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+        [System.ComponentModel.ReadOnly(true)]
         public virtual IEnumerable<ITreeNode> Nodes { 
             get { return _nodes; }
             set { 
@@ -258,18 +297,25 @@ namespace Stalker_Studio.Common
                 OnPropertyChanged();
             }
         }
+        [System.ComponentModel.ReadOnly(true)]
         public virtual bool IsLast
         {
             get { return _nodes.Count == 0; }
         }
         public object Value { 
             get { return _value; }
-            set { 
+            set {
+                if (value is INotifyPropertyChanged)
+                    (value as INotifyPropertyChanged).PropertyChanged -= ValuePropertyChanged;
                 _value = (TType)value;
                 OnPropertyChanged();
             }
         }
 
+        private void ValuePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged(null);
+        }
         /// <summary>
         /// Возвращает элементы дерева в соответсвии с типом
         /// </summary>
@@ -332,6 +378,8 @@ namespace Stalker_Studio.Common
         }
         public override string ToString()
         {
+            if (_value == null)
+                return "<null>";
             return _value.ToString();
         }
     }

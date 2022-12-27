@@ -6,10 +6,11 @@
         <ResourceDictionary Source="DictionaryBaseStyles.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="TreeView" BasedOn="{StaticResource style_Common}">
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Visible"></Setter>
+    <Style x:Key="style_TreView" TargetType="TreeView" BasedOn="{StaticResource style_Common}">
         <Setter Property="Background" Value="{DynamicResource brush_BackgroundContent}"/>
     </Style>
+
+    <Style TargetType="TreeView" BasedOn="{StaticResource style_TreView}"/>
 
     <Style x:Key="style_TreeToggleButton" TargetType="ToggleButton">
         <Setter Property="Padding" Value="0,4"/>
@@ -20,7 +21,7 @@
                     <Border x:Name="Border" Padding="{TemplateBinding Padding}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="18" />
+                                <ColumnDefinition Width="16" />
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
                             <Path x:Name="CollapsedArrow" Grid.Column="0" Fill="{DynamicResource brush_Glyph}" HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -61,38 +62,53 @@
         <Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
         <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
         <Setter Property="Padding" Value="1" />
-        <Setter Property="Background" Value="Transparent" />
-        <!--<Setter Property="FocusVisualStyle" Value="{StaticResource }" />-->
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TreeViewItem}">
-                    <Grid>
+                    <Grid x:Name="Grid">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MinWidth="14" Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="SelectionStates">
-                                <VisualState x:Name="Selected">
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <!--Change the SolidColorBrush, ButtonBrush, to red when the
+                                    mouse is over the button.-->
+                                <VisualState x:Name="MouseOver">
                                     <Storyboard>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="Bd"
-                                                Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                                            <EasingColorKeyFrame KeyTime="0" Value="{StaticResource color_Border}"/>
-                                        </ColorAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames
+                                                Storyboard.TargetName="Bd"
+                                                Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource brush_Border-50}"/>
+                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames
+                                                Storyboard.TargetName="Bd"
+                                                Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource brush_Selection-50}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionStates">
                                 <VisualState x:Name="Unselected" />
                                 <VisualState x:Name="SelectedInactive">
                                     <Storyboard>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="Bd"
-                                                Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                                            <EasingColorKeyFrame KeyTime="0" Value="{StaticResource color_Background}" />
-                                        </ColorAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames
+                                                Storyboard.TargetName="Bd"
+                                                Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource brush_Border-50}"/>
+                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -113,10 +129,11 @@
                                     IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"/>
                         <Border x:Name="Bd" Grid.Column="1" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" 
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter x:Name="PART_Header" ContentSource="Header" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                                Padding="{TemplateBinding Padding}"
+                                HorizontalAlignment="Stretch">
+                            <ContentPresenter x:Name="PART_Header" ContentSource="Header" HorizontalAlignment="Stretch"/>
                         </Border>
-                        <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Visibility="Collapsed" />
+                        <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" Grid.Column="1" Visibility="Collapsed" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="HasItems" Value="false">
@@ -136,6 +153,9 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="PART_Header" Property="MinHeight" Value="19" />
                         </MultiTrigger>
+                        <!--<Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource brush_Border-50}"/>
+                        </Trigger>--> 
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

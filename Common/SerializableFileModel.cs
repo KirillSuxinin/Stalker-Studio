@@ -30,17 +30,8 @@ namespace Stalker_Studio.Common
         bool _autoSerialization = false;
 
         public SerializableFileModel() : base() { }
-        /// <summary>
-        /// Заполняет объект, в конце вызывает Load()
-        /// </summary>
         public SerializableFileModel(FileInfo file) : base(file) { }
-        /// <summary>
-        /// Заполняет объект, в конце вызывает Deserialize()
-        /// </summary>
-        public SerializableFileModel(string serializedString) : base()
-        {
-            Deserialize(serializedString);
-        }
+        public SerializableFileModel(string fullName) : base(fullName) { }
 
         /// <summary>
         /// Текущее состояние сериализации, при автосериализации присвоение вызывает OnSetSerializationState()
@@ -60,6 +51,7 @@ namespace Stalker_Studio.Common
         /// Режим автоматического управления сериализацией, по умолчанию false
         /// Отложенная сериализация работает только в режиме автоматического управления сериализацией
         /// </summary>
+        [System.ComponentModel.Browsable(false)]
         public bool AutoSerialization
         {
             get { return _autoSerialization; }

@@ -7,12 +7,11 @@ using System.Runtime.CompilerServices;
 
 namespace Stalker_Studio.ViewModel
 {
-	class ViewModelBase : INotifyPropertyChanged
+	public class ViewModelBase : INotifyPropertyChanged
 	{
-
-		protected ObservableCollection<ICommand> _commands = new ObservableCollection<ICommand>();
-
-		public virtual ObservableCollection<ICommand> Commands { get { return _commands; } }
+		protected ObservableCollection<ExtendedRelayCommand> _commands = new ObservableCollection<ExtendedRelayCommand>();
+		[Browsable(false)]
+		public virtual ObservableCollection<ExtendedRelayCommand> Commands { get { return _commands; } }
 
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
 		{

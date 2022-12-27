@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+using PropertyTools.DataAnnotations;
 
 namespace Stalker_Studio.ViewModel
 {
@@ -11,14 +12,13 @@ namespace Stalker_Studio.ViewModel
 		private bool _isActive = false;
 		#endregion fields
 
-		#region constructors
 		public PaneViewModel()
 		{
 		}
-		#endregion constructors
 
 		#region Properties
-		public string Title
+		[System.ComponentModel.ReadOnly(true)]
+		public virtual string Title
 		{
 			get => _title;
 			set
